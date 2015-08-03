@@ -17,11 +17,11 @@ Default Biblio Status: current
 <style>
 /* hide ugly stuff that is moved to the acks */
 [data-fill-with="spec-metadata"] .editor {
-  display: none;
+    display: none;
 }
 
 [data-fill-with="copyright"] {
-  display: none;
+    display: none;
 }
 </style>
 
@@ -32,7 +32,9 @@ Default Biblio Status: current
 
 <em>This section is non-normative.</em>
 
-TODO: explain
+{{MediaStream}} objects act as opaque handles to a stream of audio and video data. These can be consumed in a variety of ways by various platform APIs, as defined in [[GETUSERMEDIA]]. This specification defines a way of consuming them by creating a <a>readable stream</a>, whose <a>chunks</a> are {{Blob}}s of encoded audio/video data recorded from the stream.
+
+The resulting readable stream, known as a <code>MediaStream</code> recorder and embodied by the {{MediaStreamRecorder}} interface, can then be read from directly by author code which wishes to manipulate these blobs. Alternately, it may be <a>piped</a> to another destination, or consumed by other code that takes a readable stream.
 
 <h2 id="examples">Example Usage</h2>
 
@@ -105,8 +107,14 @@ Per <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>, to the
 <pre class="anchors">
 url: https://w3c.github.io/mediacapture-main/#idl-def-MediaStream; type: interface
     text: MediaStream
-url: https://streams.spec.whatwg.org/#rs-class; type: interface; spec: STREAMS
-    text: ReadableStream
+urlPrefix: https://streams.spec.whatwg.org/; spec: STREAMS
+    text: ReadableStream; url: #rs-class; type: interface
+    type: dfn
+        text: readable stream
+        text: chunk
+        text: pipe; url: #piping
 urlPrefix: https://heycam.github.io/webidl/; type: exception; spec: WEBIDL
     text: NotSupportedError
+url: https://w3c.github.io/FileAPI/#dfn-Blob; type: interface
+    text: Blob
 </pre>
