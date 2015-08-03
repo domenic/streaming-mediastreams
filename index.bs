@@ -8,6 +8,7 @@ Boilerplate: omit conformance, omit feedback-header
 Editor: Domenic Denicola, Google https://www.google.com/, d@domenic.me, https://domenic.me/
 Abstract: This specification allows the creation of a readable stream derived from a MediaStream object, to allow
 Abstract: recording or other direct manipulation of the MediaStream's contents.
+Default Biblio Status: current
 !Participate: <a href="https://github.com/domenic/streaming-mediastreams">GitHub domenic/streaming-mediastreams</a> (<a href="https://github.com/domenic/streaming-mediastreams/issues/new">new issue</a>, <a href="https://github.com/domenic/streaming-mediastreams/issues?state=open">open issues</a>)
 !Participate: <a href="https://wiki.whatwg.org/wiki/IRC">IRC: #whatwg on Freenode</a>
 !Commits: <a href="https://github.com/domenic/streaming-mediastreams/commits">https://github.com/domenic/streaming-mediastreams/commits</a>
@@ -31,6 +32,66 @@ Abstract: recording or other direct manipulation of the MediaStream's contents.
 
 <em>This section is non-normative.</em>
 
+TODO: explain
+
+<h2 id="examples">Example Usage</h2>
+
+<em>This section is non-normative.</em>
+
+TODO!
+
+<h2 id="media-stream-recorder">The <code>MediaStreamRecorder</code> API</h2>
+
+<pre class="idl">
+[Constructor(MediaStream stream, optional MediaStreamRecorderOptions options)]
+interface MediaStreamRecorder : ReadableStream {
+  readonly attribute MediaStream mediaStream;
+  readonly attribute DOMString mimeType;
+  readonly attribute boolean ignoreMutedMedia;
+
+  static CanPlayTypeResult canRecord(DOMString mimeType);
+};
+
+dictionary MediaStreamRecorderOptions {
+  DOMString mimeType;
+  boolean ignoreMutedMedia = false;
+};
+</pre>
+
+All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], and \[[ignoreMutedMedia]] internal slots.
+
+<h3 id="msr-constructor">new MediaStreamRecorder(stream, options)</h3>
+
+1. If <code>options.mimeType</code> is not a supported MIME type for media stream recording, throw a {{NotSupportedError}} DOMException.
+1. Set this@\[[mediaStream]] to <code>mediaStream</code>.
+1. Set this@\[[mimeType]] to <code>options.mimeType</code>.
+1. Set this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>.
+1. TODO: the actually interesting stuff.
+
+<h3 id="msr-media-stream">get MediaStreamRecorder.prototype.mediaStream</h3>
+
+1. Return this@\[[mediaStream]].
+
+<h3 id="msr-mime-type">get MediaStreamRecorder.prototype.mimeType</h3>
+
+1. Return this@\[[mimeType]].
+
+<h3 id="msr-ignore-muted-media">get MediaStreamRecorder.prototype.ignoreMutedMedia</h3>
+
+1. Return this@\[[ignoreMutedMedia]].
+
+
+<h3 id="msr-can-record">MediaStreamRecorder.canRecord(mimeType)</h3>
+
+1. If the user agent knows that it cannot record <code>mimeType</code>, return <code>""</code>.
+1. If the user agent is confident that it can record <code>mimeType</code>, return <code>"probably"</code>.
+1. Return <code>"maybe"</code>.
+
+<div class="note">
+    Implementers are encouraged to return <code>"maybe"</code> unless the type can be confidently established as being
+    supported or not.
+</div>
+
 <h2 id="acks" class="no-num">Acknowledgments</h2>
 
 The editor would like to thank
@@ -40,3 +101,12 @@ for their contributions to this specification.
 This standard is written by <a href="https://domenic.me/">Domenic Denicola</a> (<a href="https://google.com">Google</a>, <a href="mailto:d@domenic.me">d@domenic.me</a>).
 
 Per <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>, to the extent possible under law, the editor has waived all copyright and related or neighboring rights to this work.
+
+<pre class="anchors">
+url: https://w3c.github.io/mediacapture-main/#idl-def-MediaStream; type: interface
+    text: MediaStream
+url: https://streams.spec.whatwg.org/#rs-class; type: interface; spec: STREAMS
+    text: ReadableStream
+urlPrefix: https://heycam.github.io/webidl/; type: exception; spec: WEBIDL
+    text: NotSupportedError
+</pre>
