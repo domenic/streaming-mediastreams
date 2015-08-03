@@ -40,7 +40,67 @@ The resulting readable stream, known as a <code>MediaStream</code> recorder and 
 
 <em>This section is non-normative.</em>
 
-TODO!
+To read six seconds of audio-video input from a user's webcam as a single {{Blob}}, the following code could be used:
+
+<pre><code class="lang-javascript">
+function getSixSecondsOfVideo() {
+  navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
+    const recorder = new MediaStreamRecorder(mediaStream, { timeSlice: 6 * 1000 });
+    const reader = recorder.getReader();
+
+    return reader.read().then(({ value }) => {
+      reader.cancel();
+      return value;
+    });
+  });
+}
+
+getSixSecondsOfVideo().then(blob => ...);
+</code></pre>
+
+This uses the <code>timeSlice</code> option to ensure that each chunk read from the {{MediaStreamRecorder}} is at least six seconds long. Upon receiving the first chunk, it immediately cancels the readable stream, as no more recording is necessary.
+
+If the ultimate destination for the streaming audio-video input were somewhere else, say an [[INDEXEDDB]] database, then it would be more prudent to let the user agent choose the time slice, and to store the chunks as they are available:
+
+<pre><code class="lang-javascript">
+navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
+  const recorder = new MediaStreamRecorder(mediaStream);
+  writeReadableStreamToIndexedDB(recorder);
+});
+
+let startTime;
+
+function writeReadableStreamToIndexedDBForSixSeconds(rs) {
+  const reader = rs.getReader();
+  startTime = Date.now();
+  return pump();
+
+  function pump() {
+    return reader.read().then(({ value }) => {
+      writeBlobToIndexedDB(value); // gory details omitted
+
+      if (Date.now() - startTime > 6 * 1000) {
+        reader.cancel();
+      } else {
+        return pump();
+      }
+    });
+  }
+}
+</code></pre>
+
+If you were writing to a destination which had a proper <a>writable stream</a> representing it, this would of course become much easier:
+
+<pre><code class="lang-javascript">
+navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
+  startTime = Date.now();
+  const recorder = new MediaStreamRecorder(mediaStream);
+
+  const piping = recorder.pipeTo(someWritableStream);
+  setTimeout(() => piping.cancel(), 6 * 1000); // XXX depends on cancelable promises
+});
+</code></pre>
+
 
 <h2 id="media-stream-recorder">The <code>MediaStreamRecorder</code> API</h2>
 
@@ -125,6 +185,7 @@ urlPrefix: https://streams.spec.whatwg.org/; spec: STREAMS
     text: ReadableStream; url: #rs-class; type: interface
     type: dfn
         text: readable stream
+        text: writable stream
         text: chunk
         text: pipe; url: #piping
 urlPrefix: https://heycam.github.io/webidl/; type: exception; spec: WEBIDL
