@@ -50,6 +50,8 @@ interface MediaStreamRecorder : ReadableStream {
   readonly attribute MediaStream mediaStream;
   readonly attribute DOMString mimeType;
   readonly attribute boolean ignoreMutedMedia;
+  readonly attribute unsigned long long timeSlice;
+  readonly attribute unsigned long long bitRate;
 
   static CanPlayTypeResult canRecord(DOMString mimeType);
 };
@@ -57,10 +59,12 @@ interface MediaStreamRecorder : ReadableStream {
 dictionary MediaStreamRecorderOptions {
   DOMString mimeType;
   boolean ignoreMutedMedia = false;
+  [EnforceRange] unsigned long long timeSlice = 0;
+  [EnforceRange] unsigned long long bitRate;
 };
 </pre>
 
-All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], and \[[ignoreMutedMedia]] internal slots.
+All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], \[[ignoreMutedMedia]], \[[timeSlice]], and \[[bitRate]] internal slots.
 
 <h3 id="msr-constructor">new MediaStreamRecorder(stream, options)</h3>
 
@@ -68,6 +72,8 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], and 
 1. Set this@\[[mediaStream]] to <code>mediaStream</code>.
 1. Set this@\[[mimeType]] to <code>options.mimeType</code>.
 1. Set this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>.
+1. Set this@\[[timeSlice]] to the greater of <code>options.timeSlice</code> and some minimum recording time slice imposed by the user agent.
+1. If <code>options.bitRate</code> is present, set this@\[[bitRate]] to <code>options.bitRate</code>, clamped within a range deemed acceptable by the user agent. Otherwise, set this@\[[bitRate]] to a default bit rate, perhaps dependent on this@\[[mimeType]] or this@\[[timeSlice]].
 1. TODO: the actually interesting stuff.
 
 <h3 id="msr-media-stream">get MediaStreamRecorder.prototype.mediaStream</h3>
@@ -81,6 +87,14 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], and 
 <h3 id="msr-ignore-muted-media">get MediaStreamRecorder.prototype.ignoreMutedMedia</h3>
 
 1. Return this@\[[ignoreMutedMedia]].
+
+<h3 id="msr-time-slice">get MediaStreamRecorder.prototype.timeSlice</h3>
+
+1. Return this@\[[timeSlice]].
+
+<h3 id="msr-bit-rate">get MediaStreamRecorder.prototype.bitRate</h3>
+
+1. Return this@\[[bitRate]].
 
 
 <h3 id="msr-can-record">MediaStreamRecorder.canRecord(mimeType)</h3>
