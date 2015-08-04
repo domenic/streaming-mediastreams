@@ -4,7 +4,7 @@ Shortname: streaming-mediastreams
 Repository: domenic/streaming-mediastreams
 Inline Github Issues: true
 Status: DREAM
-Boilerplate: omit conformance, omit feedback-header
+Boilerplate: omit conformance, omit feedback-header, omit issues-index
 Editor: Domenic Denicola, Google https://www.google.com/, d@domenic.me, https://domenic.me/
 Abstract: This specification allows the creation of a readable stream derived from a MediaStream object, to allow
 Abstract: recording or other direct manipulation of the MediaStream's contents.
