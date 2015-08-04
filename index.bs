@@ -32,7 +32,7 @@ Default Biblio Status: current
 
 <em>This section is non-normative.</em>
 
-{{MediaStream}} objects act as opaque handles to a stream of audio and video data. These can be consumed in a variety of ways by various platform APIs, as defined in [[GETUSERMEDIA]]. This specification defines a way of consuming them by creating a <a>readable stream</a>, whose <a>chunks</a> are {{Blob}}s of encoded audio/video data recorded from the stream.
+{{MediaStream}} objects act as opaque handles to a stream of audio and video data. These can be consumed in a variety of ways by various platform APIs, as discussed in [[GETUSERMEDIA]]. This specification defines a way of consuming them by creating a <a>readable stream</a>, whose <a>chunks</a> are {{Blob}}s of encoded audio/video data recorded from the stream in a standard container format.
 
 The resulting readable stream, known as a <code>MediaStream</code> recorder and embodied by the {{MediaStreamRecorder}} interface, can then be read from directly by author code which wishes to manipulate these blobs. Alternately, it may be <a>piped</a> to another destination, or consumed by other code that takes a readable stream.
 
