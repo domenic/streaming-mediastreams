@@ -132,13 +132,14 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[type]], \[[ignor
 
 <h3 id="msr-constructor">new MediaStreamRecorder(stream, options)</h3>
 
-1. If <code>options.type</code> is not a supported MIME type for media stream recording, throw a {{NotSupportedError}} DOMException.
+1. If <code>options.type</code> is present but is not a supported MIME type for media stream recording, throw a {{NotSupportedError}} DOMException.
+1. If <code>options.type</code> is present, let <var>type</var> be <code>options.type</code>. Otherwise, let <var>type</var> be a user-agent chosen default recording MIME type.
+1. If <code>options.bitRate</code> is present, let <var>bitRate</var> be <code>options.bitRate</code>, clamped within a range deemed acceptable by the user agent. Otherwise, let <var>bitRate</var> be a default bit rate, perhaps dependent on <var>type</var> or <var>timeSlice</var>.
 1. Let <var>timeSlice</var> be the greater of <code>options.timeSlice</code> and some minimum recording time slice imposed by the user agent.
-1. If <code>options.bitRate</code> is present, let <var>bitRate</var> be <code>options.bitRate</code>, clamped within a range deemed acceptable by the user agent. Otherwise, let <var>bitRate</var> be a default bit rate, perhaps dependent on <code>options.type</code> or <var>timeSlice</var>.
 1. Call <a href="https://streams.spec.whatwg.org/#rs-constructor">the superconstructor</a> with appropriate underlying source and queuing strategy arguments so as to record <code>mediaStream</code> according to the following requirements:
     1. All data from <code>mediaStream</code> must be recorded as {{Blob}} chunks that are enqueued into this readable stream.
     1. All such chunks must represent at least <var>timeSlice</var> milliseconds of data, except potentially the last one if the {{MediaStream}} ends before that much data can be recorded. Any excess length beyond <var>timeSlice</var> milliseconds for each chunk should be minimized.
-    1. The resulting chunks must be created such that the original tracks of the <code>MediaStream</code> can be retrieved at playback time by standard software meant for replaying the container format specified by <code>options.type</code>. When multiple <code>Blob</code> chunks are enqueued, the individual <code>Blob</code>s need not be playable, but the concatenation of all the <code>Blob</code>s from a completed recording must be playable.
+    1. The resulting chunks must be created such that the original tracks of the <code>MediaStream</code> can be retrieved at playback time by standard software meant for replaying the container format specified by <var>type</var>. When multiple <code>Blob</code> chunks are enqueued, the individual <code>Blob</code>s need not be playable, but the concatenation of all the <code>Blob</code>s from a completed recording must be playable.
     1. The resulting chunks must be encoded using <var>bitRate</var> as the bit rate for encoding.
     1. If any track within the <code>MediaStream</code> is muted at any time, then either:
         1. If <code>options.ignoreMutedMedia</code> is <b>true</b>, nothing must be recorded for those tracks.
@@ -148,7 +149,7 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[type]], \[[ignor
       1. A chunk containing any currently-recorded but not-yet-enqueued data must be enqueued into this readable stream.
       1. This readable stream must be errored with a <code>TypeError</code>.
     1. If <code>mediaStream</code> ends, then this readable stream must be closed.
-1. Set this@\[[mediaStream]] to <code>mediaStream</code>, this@\[[type]] to <code>options.type</code>, this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>, this@\[[timeSlice]] to <var>timeSlice</var>, and this@\[[bitRate]] to <var>bitRate</var>.
+1. Set this@\[[mediaStream]] to <code>mediaStream</code>, this@\[[type]] to <var>type</var>, this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>, this@\[[timeSlice]] to <var>timeSlice</var>, and this@\[[bitRate]] to <var>bitRate</var>.
 
 Issue(1):
 
