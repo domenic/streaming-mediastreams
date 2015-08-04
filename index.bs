@@ -101,6 +101,8 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
 });
 </code></pre>
 
+Issue(3):
+
 
 <h2 id="media-stream-recorder">The <code>MediaStreamRecorder</code> API</h2>
 
@@ -146,6 +148,8 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], \[[i
     1. If <code>mediaStream</code> ends, then this readable stream must be closed.
 1. Set this@\[[mediaStream]] to <code>mediaStream</code>, this@\[[mimeType]] to <code>options.mimeType</code>, this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>, this@\[[timeSlice]] to <var>timeSlice</var>, and this@\[[bitRate]] to <var>bitRate</var>.
 
+Issue(1):
+
 <h3 id="msr-media-stream">get MediaStreamRecorder.prototype.mediaStream</h3>
 
 1. Return this@\[[mediaStream]].
@@ -153,6 +157,8 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], \[[i
 <h3 id="msr-mime-type">get MediaStreamRecorder.prototype.mimeType</h3>
 
 1. Return this@\[[mimeType]].
+
+Issue(2):
 
 <h3 id="msr-ignore-muted-media">get MediaStreamRecorder.prototype.ignoreMutedMedia</h3>
 
