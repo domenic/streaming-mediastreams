@@ -150,6 +150,8 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], \[[i
 
 Issue(1):
 
+Issue(4):
+
 <h3 id="msr-media-stream">get MediaStreamRecorder.prototype.mediaStream</h3>
 
 1. Return this@\[[mediaStream]].
