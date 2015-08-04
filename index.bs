@@ -129,12 +129,22 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[mimeType]], \[[i
 <h3 id="msr-constructor">new MediaStreamRecorder(stream, options)</h3>
 
 1. If <code>options.mimeType</code> is not a supported MIME type for media stream recording, throw a {{NotSupportedError}} DOMException.
-1. Set this@\[[mediaStream]] to <code>mediaStream</code>.
-1. Set this@\[[mimeType]] to <code>options.mimeType</code>.
-1. Set this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>.
-1. Set this@\[[timeSlice]] to the greater of <code>options.timeSlice</code> and some minimum recording time slice imposed by the user agent.
-1. If <code>options.bitRate</code> is present, set this@\[[bitRate]] to <code>options.bitRate</code>, clamped within a range deemed acceptable by the user agent. Otherwise, set this@\[[bitRate]] to a default bit rate, perhaps dependent on this@\[[mimeType]] or this@\[[timeSlice]].
-1. TODO: the actually interesting stuff.
+1. Let <var>timeSlice</var> be the greater of <code>options.timeSlice</code> and some minimum recording time slice imposed by the user agent.
+1. If <code>options.bitRate</code> is present, let <var>bitRate</var> be <code>options.bitRate</code>, clamped within a range deemed acceptable by the user agent. Otherwise, let <var>bitRate</var> be a default bit rate, perhaps dependent on <code>options.mimeType</code> or <var>timeSlice</var>.
+1. Call <a href="https://streams.spec.whatwg.org/#rs-constructor">the superconstructor</a> with appropriate underlying source and queuing strategy arguments so as to record <code>mediaStream</code> according to the following requirements:
+    1. All data from <code>mediaStream</code> must be recorded as {{Blob}} chunks that are enqueued into this readable stream.
+    1. All such chunks must represent at least <var>timeSlice</var> milliseconds of data, except potentially the last one if the {{MediaStream}} ends before that much data can be recorded. Any excess length beyond <var>timeSlice</var> milliseconds for each chunk should be minimized.
+    1. The resulting chunks must be created such that the original tracks of the <code>MediaStream</code> can be retrieved at playback time by standard software meant for replaying the container format specified by <code>options.mimeType</code>. When multiple <code>Blob</code> chunks are enqueued, the individual <code>Blob</code>s need not be playable, but the concatenation of all the <code>Blob</code>s from a completed recording must be playable.
+    1. The resulting chunks must be encoded using <var>bitRate</var> as the bit rate for encoding.
+    1. If any track within the <code>MediaStream</code> is muted at any time, then either:
+        1. If <code>options.ignoreMutedMedia</code> is <b>true</b>, nothing must be recorded for those tracks.
+        1. Otherwise, the chunks enqueued to represent those tracks must be recorded as black frames or silence (as appropriate) while the track remains muted.
+    1. If at any point <code>mediaStream</code>'s isolation properties change so that access to it is no longer allowed, this readable stream must be errored with a {{SecurityError}} DOMException.
+    1. If recording cannot be started or at any point is cannot continue (for reasons other than a security violation),
+      1. A chunk containing any currently-recorded but not-yet-enqueued data must be enqueued into this readable stream.
+      1. This readable stream must be errored with a <code>OtherRecordingError</code> DOMException.
+    1. If <code>mediaStream</code> ends, then this readable stream must be closed.
+1. Set this@\[[mediaStream]] to <code>mediaStream</code>, this@\[[mimeType]] to <code>options.mimeType</code>, this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>, this@\[[timeSlice]] to <var>timeSlice</var>, and this@\[[bitRate]] to <var>bitRate</var>.
 
 <h3 id="msr-media-stream">get MediaStreamRecorder.prototype.mediaStream</h3>
 
@@ -190,6 +200,7 @@ urlPrefix: https://streams.spec.whatwg.org/; spec: STREAMS
         text: pipe; url: #piping
 urlPrefix: https://heycam.github.io/webidl/; type: exception; spec: WEBIDL
     text: NotSupportedError
+    text: SecurityError
 url: https://w3c.github.io/FileAPI/#dfn-Blob; type: interface
     text: Blob
 </pre>
