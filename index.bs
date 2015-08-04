@@ -146,7 +146,7 @@ All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[type]], \[[ignor
     1. If at any point <code>mediaStream</code>'s isolation properties change so that access to it is no longer allowed, this readable stream must be errored with a {{SecurityError}} DOMException.
     1. If recording cannot be started or at any point is cannot continue (for reasons other than a security violation),
       1. A chunk containing any currently-recorded but not-yet-enqueued data must be enqueued into this readable stream.
-      1. This readable stream must be errored with a <code>OtherRecordingError</code> DOMException.
+      1. This readable stream must be errored with a <code>TypeError</code>.
     1. If <code>mediaStream</code> ends, then this readable stream must be closed.
 1. Set this@\[[mediaStream]] to <code>mediaStream</code>, this@\[[type]] to <code>options.type</code>, this@\[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>, this@\[[timeSlice]] to <var>timeSlice</var>, and this@\[[bitRate]] to <var>bitRate</var>.
 
