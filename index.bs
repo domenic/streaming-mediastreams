@@ -130,7 +130,7 @@ dictionary MediaStreamRecorderOptions {
 
 All {{MediaStreamRecorder}} instances have \[[mediaStream]], \[[type]], \[[ignoreMutedMedia]], \[[timeSlice]], and \[[bitRate]] internal slots.
 
-<h3 id="msr-constructor">new MediaStreamRecorder(stream, options)</h3>
+<h3 id="msr-constructor" constructor dfn-for="MediaStreamRecorder" lt="MediaStreamRecorder(stream, options)|MediaStreamRecorder(stream)">new MediaStreamRecorder(stream, options)</h3>
 
 1. If <code>options.type</code> is present but is not a supported MIME type for media stream recording, throw a {{NotSupportedError}} DOMException.
 1. If <code>options.type</code> is present, let <var>type</var> be <code>options.type</code>. Otherwise, let <var>type</var> be a user-agent chosen default recording MIME type.
@@ -155,30 +155,30 @@ Issue(1):
 
 Issue(4):
 
-<h3 id="msr-media-stream">get MediaStreamRecorder.prototype.mediaStream</h3>
+<h3 id="msr-media-stream" attribute dfn-for="MediaStreamRecorder" lt="mediaStream">get MediaStreamRecorder.prototype.mediaStream</h3>
 
 1. Return this@\[[mediaStream]].
 
-<h3 id="msr-type">get MediaStreamRecorder.prototype.type</h3>
+<h3 id="msr-type" attribute dfn-for="MediaStreamRecorder" lt="type">get MediaStreamRecorder.prototype.type</h3>
 
 1. Return this@\[[type]].
 
 Issue(2):
 
-<h3 id="msr-ignore-muted-media">get MediaStreamRecorder.prototype.ignoreMutedMedia</h3>
+<h3 id="msr-ignore-muted-media" attribute dfn-for="MediaStreamRecorder" lt="ignoreMutedMedia">get MediaStreamRecorder.prototype.ignoreMutedMedia</h3>
 
 1. Return this@\[[ignoreMutedMedia]].
 
-<h3 id="msr-time-slice">get MediaStreamRecorder.prototype.timeSlice</h3>
+<h3 id="msr-time-slice" attribute dfn-for="MediaStreamRecorder" lt="timeSlice">get MediaStreamRecorder.prototype.timeSlice</h3>
 
 1. Return this@\[[timeSlice]].
 
-<h3 id="msr-bit-rate">get MediaStreamRecorder.prototype.bitRate</h3>
+<h3 id="msr-bit-rate" attribute dfn-for="MediaStreamRecorder" lt="bitRate">get MediaStreamRecorder.prototype.bitRate</h3>
 
 1. Return this@\[[bitRate]].
 
 
-<h3 id="msr-can-record-type">MediaStreamRecorder.canRecordType(type)</h3>
+<h3 id="msr-can-record-type" method dfn-for="MediaStreamRecorder" lt="canRecordType(type)">MediaStreamRecorder.canRecordType(type)</h3>
 
 1. If the user agent knows that it cannot record <code>type</code>, return <code>""</code>.
 1. If the user agent is confident that it can record <code>type</code>, return <code>"probably"</code>.
