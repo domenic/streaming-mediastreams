@@ -105,6 +105,8 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
 
 Issue(3):
 
+Issue(6):
+
 
 <h2 id="media-stream-recorder">The <code>MediaStreamRecorder</code> API</h2>
 
