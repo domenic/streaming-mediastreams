@@ -67,7 +67,7 @@ If the ultimate destination for the streaming audio-video input were somewhere e
 <pre><code class="lang-javascript">
 navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
   const recorder = new MediaStreamRecorder(mediaStream);
-  writeReadableStreamToIndexedDB(recorder);
+  writeReadableStreamToIndexedDBForSixSeconds(recorder);
 });
 
 let startTime;
@@ -98,8 +98,25 @@ navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
   startTime = Date.now();
   const recorder = new MediaStreamRecorder(mediaStream);
 
-  const piping = recorder.pipeTo(someWritableStream);
+  const dest = getIndexedDBWritableStream(); // using hypothetical future capabilities
+
+  const piping = recorder.pipeTo(dest);
   setTimeout(() => piping.cancel(), 6 * 1000); // XXX depends on cancelable promises
+});
+</code></pre>
+
+Alternately, your destination may accept readable streams, as is planned for [[FETCH]]. This example will continually stream video from the user's video camera directly to a server endpoint, using standard [[STREAMS]] and [[FETCH]] idioms that work with any readable stream:
+
+<pre><code class="lang-javascript">
+navigator.mediaDevices.getUserMedia({ video: true }).then(mediaStream => {
+  const recorder = new MediaStreamRecorder(mediaStream, { type: "video/mp4" });
+
+  return fetch("/storage/user-video.mp4", {
+    body: recorder,
+    headers: {
+      "Content-Type": "video/mp4"
+    }
+  });
 });
 </code></pre>
 
