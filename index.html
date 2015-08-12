@@ -1,0 +1,1625 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  
+  
+  <title>Streaming MediaStreams</title>
+  
+  
+  <style data-fill-with="stylesheet">/* This section copied from the W3C's ED styles. */
+
+	body {
+		color: black;
+		font-family: sans-serif;
+		margin: 0 auto;
+		max-width: 50em;
+		padding: 2em 1em 2em 70px;
+	}
+	:link { color: #00C; background: transparent }
+	:visited { color: #609; background: transparent }
+	a[href]:active { color: #C00; background: transparent }
+	a[href]:hover { background: #ffa }
+
+	a[href] img { border-style: none }
+
+	h1, h2, h3, h4, h5, h6 { text-align: left }
+	h1, h2, h3 { color: #005A9C; }
+	h1 { font: 170% sans-serif }
+	h2 { font: 140% sans-serif }
+	h3 { font: 120% sans-serif }
+	h4 { font: bold 100% sans-serif }
+	h5 { font: italic 100% sans-serif }
+	h6 { font: small-caps 100% sans-serif }
+
+	.hide { display: none }
+
+	div.head { margin-bottom: 1em }
+	div.head h1 { margin-top: 2em; clear: both }
+	div.head table { margin-left: 2em; margin-top: 2em }
+
+	p.copyright { font-size: small }
+	p.copyright small { font-size: small }
+
+	pre { margin-left: 2em }
+	dt { font-weight: bold }
+
+	ul.toc, ol.toc {
+		list-style: none;
+	}
+
+/* The rest copied from the CSSWG's default.css */
+
+	body {
+		counter-reset: exampleno figure issue;
+		max-width: 50em;
+		margin: 0 auto !important;
+		line-height: 1.5;
+	}
+
+/******************************************************************************/
+/*                                Sectioning                                  */
+/******************************************************************************/
+
+/** Headings ******************************************************************/
+
+	h1, h2, h3, h4, h5, h6, dt {
+		page-break-after: avoid;
+	}
+
+	h2, h3, h5, h6 {
+		margin-top: 3em;
+	}
+	h4 {
+		 margin-top: 4em;
+	}
+
+/** Subheadings ***************************************************************/
+
+	h1 + h2,
+	#subtitle + h2 {
+		/* #subtitle is a subtitle in an H2 under the H1 */
+		margin-top: 0;
+	}
+	h2 + h3,
+	h3 + h4,
+	h4 + h5,
+	h5 + h6 {
+		margin-top: 1.2em; /* = 1 x line-height */
+	}
+
+/** Section divider ***********************************************************/
+	/* <hr> used to separate TMI into the second half of a section              */
+	hr:not([title]) {
+		font-size: 1.5em;
+		text-align: center;
+		margin: 1em auto;
+		height: auto;
+		border: transparent solid 0;
+		background: transparent;
+	}
+	hr:not([title])::before {
+		content: "\1F411\2003\2003\1F411\2003\2003\1F411";
+	}
+	/* note: <hr> with title separates document header from contents */
+
+/******************************************************************************/
+/*                            Paragraphs and Lists                            */
+/******************************************************************************/
+
+	p {
+		margin: 1em 0;
+	}
+	dd     > p:first-child,
+	li     > p:first-child {
+		margin-top: 0;
+	}
+
+	ul, ol {
+		margin-left: 0;
+		padding-left: 2em;
+	}
+	li {
+		margin: 0.25em 2em 0.5em 0;
+		padding-left: 0;
+	}
+
+	dl dd {
+		margin: 0 0 1em 2em;
+	}
+	.head dd {
+		margin-bottom: 0;
+	}
+
+	/* Style for algorithms */
+	ol.algorithm ol {
+	 border-left: 1px solid #90b8de;
+	 margin-left: 1em;
+	}
+	ol.algorithm ol.algorithm {
+	 border-left: none;
+	 margin-left: 0;
+	}
+
+	/* Style for switch/case <dl>s */
+	dl.switch > dd > ol.only {
+	 margin-left: 0;
+	}
+	dl.switch > dd > ol.algorithm {
+	 margin-left: -2em;
+	}
+	dl.switch {
+	 padding-left: 2em;
+	}
+	dl.switch > dt {
+	 text-indent: -1.5em;
+	 margin-top: 1em;
+	}
+	dl.switch > dt + dt {
+	 margin-top: 0;
+	}
+	dl.switch > dt::before {
+	 content: '\21AA';
+	 padding: 0 0.5em 0 0;
+	 display: inline-block;
+	 width: 1em;
+	 text-align: right;
+	 line-height: 0.5em;
+	}
+
+	/* Style for paragraphs I know are in MD-genned lists */
+	[data-md] > :first-child {
+		margin-top: 0;
+	}
+	[data-md] > :last-child {
+		margin-bottom: 0;
+	}
+
+/** Inline Lists **************************************************************/
+	/* This is mostly to make the list inside the CR exit criteria more compact. */
+
+	ol.inline, ol.inline li {
+		display: inline;
+		padding: 0; margin: 0;
+	}
+	ol.inline {
+		counter-reset: list-item;
+	}
+	ol.inline li {
+		counter-increment: list-item;
+	}
+	ol.inline li::before {
+		content: "(" counter(list-item) ") ";
+		font-weight: bold;
+	}
+
+/** Terminology Markup ********************************************************/
+
+
+/******************************************************************************/
+/*                                 Inline Markup                              */
+/******************************************************************************/
+
+/** Terminology Markup ********************************************************/
+	dfn   { /* Defining instance */
+		font-weight: bolder;
+	}
+	a > i { /* Instance of term */
+		font-style: normal;
+	}
+	dt dfn code, code.idl {
+		font-size: inherit;
+	}
+	dfn var {
+		font-style: normal;
+	}
+
+/** Change Marking ************************************************************/
+
+	del { color: red;  text-decoration: line-through; }
+	ins { color: #080; text-decoration: underline;    }
+
+/** Miscellaneous improvements to inline formatting ***************************/
+
+	sup {
+		vertical-align: super;
+		font-size: 80%
+	}
+
+/******************************************************************************/
+/*                                    Code                                    */
+/******************************************************************************/
+
+/** General monospace/pre rules ***********************************************/
+
+	pre, code {
+		font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+		font-size: .9em;
+		page-break-inside: avoid;
+	}
+	pre {
+		margin-top: 1em;
+		margin-bottom: 1em;
+		overflow: auto;
+	}
+
+/** Syntax-Highlighted Code ***************************************************/
+
+	.example pre[class*="language-"],
+	.example [class*="language-"] pre,
+	.example pre[class*="lang-"],
+	.example [class*="lang-"] pre {
+		background: transparent; /* Prism applies a gray background that doesn't work well in the template. */
+	}
+
+/** Example Code **************************************************************/
+
+	div.html, div.xml,
+	pre.html, pre.xml {
+		padding: 0.5em;
+		margin: 1em 0;
+		position: relative;
+		clear: both;
+		color: #600;
+	}
+	pre.example,
+	pre.html,
+	pre.xml {
+		padding-top: 1.5em;
+	}
+
+	pre.illegal, .illegal pre
+	pre.deprecated, .deprecated pre {
+		color: red;
+	}
+
+/** IDL fragments *************************************************************/
+
+	pre.idl {
+		/* Match blue propdef boxes */
+		padding: .5em 1em;
+		background: #DEF;
+		margin: 1.2em 0;
+		border-left: 0.5em solid #8CCBF2;
+	}
+	pre.idl :link, pre.idl :visited {
+		color:inherit;
+		background:transparent;
+	}
+
+/** Inline CSS fragments ******************************************************/
+
+	.css.css, .property.property, .descriptor.descriptor {
+		color: #005a9c;
+		font-size: inherit;
+		font-family: inherit;
+	}
+	.css::before, .property::before, .descriptor::before {
+		content: "‘";
+	}
+	.css::after, .property::after, .descriptor::after {
+		content: "’";
+	}
+	.property, .descriptor {
+		/* Don't wrap property and descriptor names */
+		white-space: nowrap;
+	}
+	.type { /* CSS value <type> */
+	font-style: italic;
+	}
+	pre .property::before, pre .property::after {
+		content: "";
+	}
+
+/** Inline markup fragments ***************************************************/
+
+	code.html, code.xml {
+		color: #660000;
+	}
+
+/** Autolinks produced using Bikeshed *****************************************/
+
+	[data-link-type="property"]::before,
+	[data-link-type="propdesc"]::before,
+	[data-link-type="descriptor"]::before,
+	[data-link-type="value"]::before,
+	[data-link-type="function"]::before,
+	[data-link-type="at-rule"]::before,
+	[data-link-type="selector"]::before,
+	[data-link-type="maybe"]::before {
+		content: "‘";
+	}
+	[data-link-type="property"]::after,
+	[data-link-type="propdesc"]::after,
+	[data-link-type="descriptor"]::after,
+	[data-link-type="value"]::after,
+	[data-link-type="function"]::after,
+	[data-link-type="at-rule"]::after,
+	[data-link-type="selector"]::after,
+	[data-link-type="maybe"]::after {
+		content: "’";
+	}
+
+	[data-link-type].production::before,
+	[data-link-type].production::after,
+	.prod [data-link-type]::before,
+	.prod [data-link-type]::after {
+		content: "";
+	}
+
+	[data-link-type=element]         { font-family: monospace; }
+	[data-link-type=element]::before { content: "<" }
+	[data-link-type=element]::after  { content: ">" }
+
+	[data-link-type=biblio] {
+		white-space: pre;
+	}
+
+
+/******************************************************************************/
+/*                                    Links                                   */
+/******************************************************************************/
+
+/** General Hyperlinks ********************************************************/
+
+	/* We hyperlink a lot, so make it less intrusive */
+	a:link, a:visited {
+		color: inherit;
+		text-decoration: none;
+		border-bottom: 1px solid silver;
+	}
+	@supports (text-decoration-color: silver) {
+		a:link, a:visited {
+			border-bottom: none;
+			text-decoration: underline;
+			text-decoration-color: silver;
+		}
+		a:visited {
+			text-decoration-style: dotted;
+		}
+	}
+
+	a.logo:link, a.logo:visited { /* backout above styling for W3C logo */
+		padding: 0;
+		border: none;
+		text-decoration: none;
+	}
+
+/** Self-Links ****************************************************************/
+	/* Auto-generated links from an element to its own anchor, for usability */
+
+	.heading, .issue, .note, .example, li, dt {
+		position: relative;
+	}
+	a.self-link {
+		position: absolute;
+		top: 0;
+		left: -2.5em;
+		width: 2em;
+		height: 2em;
+		text-align: center;
+		border: none;
+		transition: opacity .2s;
+		opacity: .5;
+	}
+	a.self-link:hover {
+		opacity: 1;
+	}
+	.heading > a.self-link {
+		font-size: 83%;
+	}
+	li > a.self-link {
+		left: -3.5em;
+	}
+	dfn > a.self-link {
+		top: auto;
+		left: auto;
+		opacity: 0;
+		width: 1.5em;
+		height: 1.5em;
+		background: gray;
+		color: white;
+		font-style: normal;
+		transition: opacity .2s, background-color .2s, color .2s;
+	}
+	dfn:hover > a.self-link {
+		opacity: 1;
+	}
+	dfn > a.self-link:hover {
+		color: black;
+	}
+
+	a.self-link::before            { content: "¶"; }
+	.heading > a.self-link::before { content: "§"; }
+	dfn > a.self-link::before      { content: "#"; }
+
+/******************************************************************************/
+/*                                    Images                                  */
+/******************************************************************************/
+
+	img {
+		border-style: none;
+		color: white;
+	}
+
+	figure, div.figure, div.sidefigure {
+		page-break-inside: avoid;
+	}
+
+	div.figure, p.figure, div.sidefigure, figure {
+		text-align: center;
+		margin: 2.5em 0;
+	}
+	div.figure pre, div.sidefigure pre, figure pre {
+		text-align: left;
+		display: table;
+		margin: 1em auto;
+	}
+	.figure table, figure table {
+		margin: auto;
+	}
+	div.sidefigure, figure.sidefigure {
+		float: right;
+		width: 50%;
+		margin: 0 0 0.5em 0.5em
+	}
+	div.figure img, div.sidefigure img, figure img,
+	div.figure object, div.sidefigure object, figure object {
+		display: block;
+		margin: auto;
+		max-width: 100%
+	}
+	p.caption, figcaption, caption {
+		text-align: center;
+		font-style: italic;
+		font-size: 90%;
+	}
+	p.caption:not(.no-marker)::before, figcaption:not(.no-marker)::before {
+		content: "Figure " counter(figure) ". ";
+	}
+	p.caption::before, figcaption::before, figcaption > .marker {
+		font-weight: bold;
+	}
+	p.caption, figcaption {
+		counter-increment: figure;
+	}
+
+	/* DL list is indented 2em, but figure inside it is not */
+	dd > div.figure, dd > figure { margin-left: -2em }
+
+	pre.ascii-art {
+		display: table; /* shrinkwrap */
+		margin: 1em auto;
+	}
+
+	/* Displaying the output of text layout, particularly when
+		 line-breaking is being invoked, and thus having a
+		 visible width is good. */
+	pre.output {
+		margin: 1em;
+		border: solid thin silver;
+		padding: 0.25em;
+		display: table;
+	}
+
+/******************************************************************************/
+/*                             Colored Boxes                                  */
+/******************************************************************************/
+
+	.issue, .note, .example, .why, .advisement, blockquote {
+		padding: .5em;
+		border: .5em;
+		border-left-style: solid;
+		page-break-inside: avoid;
+	}
+	span.issue, span.note {
+		padding: .1em .5em .15em;
+		border-right-style: solid;
+	}
+
+	div.issue,
+	div.note,
+	div.example,
+	details.why,
+	blockquote {
+		margin: 1em auto;
+	}
+	.note  > p:first-child,
+	.issue > p:first-child,
+	blockquote > :first-child {
+		margin-top: 0;
+	}
+	blockquote > :last-child {
+		margin-bottom: 0;
+	}
+
+/** Blockquotes ***************************************************************/
+
+	blockquote {
+		border-color: silver;
+	}
+
+/** Open issue ****************************************************************/
+	/* not intended for CR+ publication */
+
+	.issue {
+		border-color: #E05252;
+		background: #FBE9E9;
+		counter-increment: issue;
+		overflow: auto;
+	}
+	.issue:not(.no-marker)::before {
+		content: "ISSUE " counter(issue);
+		padding-right: 1em;
+	}
+	.issue::before, .issue > .marker {
+		color: #AE1E1E;
+	}
+
+/** Example *******************************************************************/
+
+	.example {
+		border-color: #E0CB52;
+		background: #FCFAEE;
+		counter-increment: exampleno;
+		overflow: auto;
+		clear: both;
+	}
+	.example::before, .example > .marker {
+		color: #827017;
+		font-family: sans-serif;
+		min-width: 7.5em;
+		display: block;
+	}
+	.example:not(.no-marker)::before {
+		content: "EXAMPLE";
+		content: "EXAMPLE " counter(exampleno);
+	}
+	.invalid.example::before, .invalid.example > .marker,
+	.illegal.example::before, .illegal.example > .marker {
+		color: red;
+	}
+	.invalid.example:not(.no-marker)::before,
+	.illegal.example:not(.no-marker)::before {
+		content: "INVALID EXAMPLE";
+		content: "INVALID EXAMPLE" counter(exampleno);
+	}
+
+/** Non-normative Note ********************************************************/
+
+	.note, .why {
+		border-color: #52E052;
+		background: #E9FBE9;
+		overflow: auto;
+	}
+	.note::before, .note > .marker {
+		display: block;
+		color: hsl(120, 70%, 30%);
+	}
+
+/** Advisement Box ************************************************************/
+	/*  for attention-grabbing normative statements */
+
+	.advisement {
+		border-color: orange;
+		border-style: none solid;
+		background: #FFEECC;
+		text-align: center;
+	}
+	strong.advisement {
+		display: block;
+	}
+	/*.advisement::before { color: #FF8800; } */
+
+/** ??? ***********************************************************************/
+
+	details.why {
+		border-color: #52E052;
+		background: #E9FBE9;
+		display: block;
+	}
+
+	details.why > summary {
+		font-style: italic;
+		display: block;
+	}
+
+	details.why[open] > summary {
+		border-bottom: 1px silver solid;
+	}
+
+/** Spec Obsoletion Notice ****************************************************/
+	/* obnoxious obsoletion notice for older/abandoned specs. */
+
+	details.annoying-warning {
+		display: block;
+	}
+
+	details.annoying-warning[open] {
+		background: #fdd;
+		color: red;
+		font-weight: bold;
+		text-align: center;
+		padding: .5em;
+		border: thick solid red;
+		border-radius: 1em;
+	}
+@media not print {
+	details.annoying-warning[open] {
+		position: fixed;
+		left: 1em;
+		right: 1em;
+		bottom: 1em;
+		z-index: 1000;
+	}
+}
+
+	details.annoying-warning:not([open]) > summary {
+		background: #fdd;
+		color: red;
+		font-weight: bold;
+		text-align: center;
+		padding: .5em;
+	}
+
+/******************************************************************************/
+/*                                    Tables                                  */
+/******************************************************************************/
+
+/** Property/Descriptor Definition Tables *************************************/
+
+	table.propdef, table.propdef-extra,
+	table.descdef, table.definition-table {
+		page-break-inside: avoid;
+		width: 100%;
+		margin: 1.2em 0;
+		border-left: 0.5em solid #8CCBF2;
+		padding: 0.5em 1em;
+		background: #DEF;
+		border-spacing: 0;
+	}
+
+	table.propdef td, table.propdef-extra td,
+	table.descdef td, table.definition-table td,
+	table.propdef th, table.propdef-extra th,
+	table.descdef th, table.definition-table th {
+		padding: 0.5em;
+		vertical-align: baseline;
+		border-bottom: 1px solid #bbd7e9;
+	}
+	table.propdef > tbody > tr:last-child th,
+	table.propdef-extra > tbody > tr:last-child th,
+	table.descdef > tbody > tr:last-child th,
+	table.definition-table > tbody > tr:last-child th,
+	table.propdef > tbody > tr:last-child td,
+	table.propdef-extra > tbody > tr:last-child td,
+	table.descdef > tbody > tr:last-child td,
+	table.definition-table > tbody > tr:last-child td {
+		border-bottom: 0;
+	}
+
+	table.propdef th,
+	table.propdef-extra th,
+	table.descdef th,
+	table.definition-table th {
+		font-style: italic;
+		font-weight: normal;
+		width: 8.3em;
+		padding-left: 1em;
+	}
+
+	/* For when values are extra-complex and need formatting for readability */
+	table td.pre {
+		white-space: pre-wrap;
+	}
+
+	/* A footnote at the bottom of a propdef */
+	table.propdef td.footnote,
+	table.propdef-extra td.footnote,
+	table.descdef td.footnote,
+	table.definition-table td.footnote {
+		padding-top: 0.6em;
+	}
+	table.propdef td.footnote::before,
+	table.propdef-extra td.footnote::before,
+	table.descdef td.footnote::before,
+	table.definition-table td.footnote::before {
+		content: " ";
+		display: block;
+		height: 0.6em;
+		width: 4em;
+		border-top: thin solid;
+	}
+
+/** Profile Tables ************************************************************/
+	/* table of required features in a CSS profile */
+
+	table.features th {
+		background: #00589f;
+		color: #fff;
+		text-align: left;
+		padding: 0.2em 0.2em 0.2em 0.5em;
+	}
+	table.features td {
+		vertical-align: top;
+		border-bottom: 1px solid #ccc;
+		padding: 0.3em 0.3em 0.3em 0.7em;
+	}
+
+/** Data tables (and properly marked-up proptables) ***************************/
+	/*
+		 <table class="data"> highlights structural relationships in a table
+		 when correct markup is used (e.g. thead/tbody, th vs. td, scope attribute)
+
+		 Use class="complex data" for particularly complicated tables --
+		 (This will draw more lines: busier, but clearer.)
+
+		 Use class="long" on table cells with paragraph-like contents
+		 (This will adjust text alignment accordingly.)
+	*/
+
+	.data, .proptable {
+		margin: 1em auto;
+		border-collapse: collapse;
+		width: 100%;
+		border: hidden;
+	}
+	.data {
+		text-align: center;
+		width: auto;
+	}
+	.data caption {
+		width: 100%;
+	}
+
+	.data td, .data th,
+	.proptable td, .proptable th {
+		padding: 0.5em;
+		border-width: 1px;
+		border-color: silver;
+		border-top-style: solid;
+	}
+
+	.data thead td:empty {
+		padding: 0;
+		border: 0;
+	}
+
+	.data thead th[scope="row"],
+	.proptable thead th[scope="row"] {
+		text-align: right;
+		color: inherit;
+	}
+
+	.data thead,
+	.proptable thead,
+	.data tbody,
+	.proptable tbody {
+		color: inherit;
+		border-bottom: 2px solid;
+	}
+
+	.data colgroup {
+		border-left: 2px solid;
+	}
+
+	.data tbody th:first-child,
+	.proptable tbody th:first-child ,
+	.data tbody td[scope="row"]:first-child,
+	.proptable tbody td[scope="row"]:first-child {
+		text-align: right;
+		color: inherit;
+		border-right: 2px solid;
+		border-top: 1px solid silver;
+		padding-right: 1em;
+	}
+	.data.define td:last-child {
+		text-align: left;
+	}
+
+	.data tbody th[rowspan],
+	.proptable tbody th[rowspan],
+	.data tbody td[rowspan],
+	.proptable tbody td[rowspan]{
+		border-left:  1px solid silver;
+		border-right: 1px solid silver;
+	}
+
+	.complex.data th,
+	.complex.data td {
+		border: 1px solid silver;
+	}
+
+	.data td.long {
+	 vertical-align: baseline;
+	 text-align: left;
+	}
+
+	.data img {
+		vertical-align: middle;
+	}
+
+
+/******************************************************************************/
+/*                                  Indices                                   */
+/******************************************************************************/
+
+
+/** Table of Contents *********************************************************/
+
+	/* ToC not indented, but font style shows hierarchy */
+	ul.toc           { margin: 1em 0;     font-weight: bold; /*text-transform: uppercase;*/ }
+	ul.toc ul        { margin: 0;        font-weight: normal; text-transform: none; }
+	ul.toc ul ul     { margin: 0 0 0 2em; font-style: italic; }
+	ul.toc ul ul ul  { margin: 0; }
+	ul.toc > li      { margin: 1.5em 0; }
+	ul.toc ul.toc li { margin: 0.3em 0 0 0; }
+
+	ul.toc, ul.toc ul, ul.toc li { padding: 0; line-height: 1.3; }
+	ul.toc a { text-decoration: none; border-bottom-style: none; }
+	ul.toc a:hover, ul.toc a:focus  { border-bottom-style: solid; }
+	@supports (text-decoration-style: solid) {
+		ul.toc a:hover, ul.toc a:focus  {
+			border-bottom-style: none;
+			text-decoration-style: solid;
+		}
+	}
+	/*
+	ul.toc li li li, ul.toc li li li ul {margin-left: 0; display: inline}
+	ul.toc li li li ul, ul.toc li li li ul li {margin-left: 0; display: inline}
+	*/
+
+	/* Section numbers in a column of their own */
+	ul.toc {
+		margin-left: 5em
+	}
+	ul.toc span.secno {
+		float: left;
+		width: 4em;
+		margin-left: -5em;
+	}
+	ul.toc ul ul span.secno {
+		margin-left: -7em;
+	}
+	/*ul.toc span.secno {text-align: right}*/
+	ul.toc li {
+		clear: both;
+	}
+	/* If we had 'tab', floats would not be needed here:
+		 ul.toc span.secno {tab: 5em right; margin-right: 1em}
+		 ul.toc li {text-indent: 5em hanging}
+	 The second line in case items wrap
+	*/
+
+/** At-risk List **************************************************************/
+	/* Style for At Risk features (intended as editorial aid, not intended for publishing) */
+
+	.atrisk::before {
+	 float: right;
+	 margin-top: -0.25em;
+	 padding: 0.5em 1em 0.5em 0;
+	 text-indent: -0.9em;
+	 border: 1px solid;
+	 content: '\25C0    Not yet widely implemented';
+	 white-space: pre;
+	 font-size: small;
+	 background-color: white;
+	 color: gray;
+	 text-align: center;
+	}
+
+	.toc .atrisk::before { content:none }
+
+/** Index *********************************************************************/
+
+	/* Index Lists: Layout */
+	ul.indexlist       { margin-left: 0; columns: 15em; -webkit-columns: 15em; text-indent: 1em hanging; }
+	ul.indexlist li    { margin-left: 0; list-style: none; break-inside: avoid; }
+	ul.indexlist li li { margin-left: 1em }
+	ul.indexlist dl    { margin-top: 0; }
+	ul.indexlist dt    { margin: .2em 0 .2em 20px;}
+	ul.indexlist dd    { margin: .2em 0 .2em 40px;}
+	/* Index Lists: Typography */
+	ul.indexlist ul,
+	ul.indexlist dl { font-size: smaller; }
+	ul.indexlist li span {
+		white-space: nowrap;
+		position: absolute;
+		color: transparent; }
+	ul.indexlist li a:hover + span,
+	ul.indexlist li a:focus + span {
+		color: gray;
+	}
+	@media print {
+		ul.indexlist li span { color: gray; }
+	}
+
+/** Property Index Tables *****************************************************/
+	/* See also the data table styling section, which this effectively subclasses */
+
+	table.proptable {
+		font-size: small;
+		border-collapse: collapse;
+		border-spacing: 0;
+		text-align: left;
+		margin: 1em 0;
+	}
+
+	table.proptable td,
+	table.proptable th {
+		padding: 0.4em;
+		text-align: center;
+	}
+
+	table.proptable tr:hover td {
+		background: #DEF;
+	}
+	.propdef th {
+		font-style: italic;
+		font-weight: normal;
+		text-align: left;
+		width: 3em;
+	}
+	/* The link in the first column in the property table (formerly a TD) */
+	table.proptable td .property,
+	table.proptable th .property {
+		display: block;
+		text-align: left;
+		font-weight: bold;
+	}
+
+/******************************************************************************/
+/*                                    Print                                   */
+/******************************************************************************/
+
+	@media print {
+		html {
+			margin: 0 !important; }
+		body {
+			font-family: serif; }
+		th, td {
+			font-family: inherit; }
+		a {
+			color: inherit !important; }
+
+		a:link, a:visited {
+			text-decoration: none !important }
+		a:link::after, a:visited::after { /* create a cross-ref "see..." */ }
+		.example::before {
+			font-family: serif !important; }
+	}
+	@page {
+		margin: 1.5cm 1.1cm;
+	}
+
+</style>
+  
+
+  <meta content="Bikeshed 1.0.0" name="generator">
+  <style>
+/* hide ugly stuff that is moved to the acks */
+[data-fill-with="spec-metadata"] .editor {
+    display: none;
+}
+
+[data-fill-with="copyright"] {
+    display: none;
+}
+</style>
+  
+
+
+  <style>.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #ffffff; }
+.highlight .c { color: #708090 } /* Comment */
+.highlight .k { color: #990055 } /* Keyword */
+.highlight .l { color: #669900 } /* Literal */
+.highlight .n { color: #0077aa } /* Name */
+.highlight .o { color: #999999 } /* Operator */
+.highlight .p { color: #999999 } /* Punctuation */
+.highlight .cm { color: #708090 } /* Comment.Multiline */
+.highlight .cp { color: #708090 } /* Comment.Preproc */
+.highlight .c1 { color: #708090 } /* Comment.Single */
+.highlight .cs { color: #708090 } /* Comment.Special */
+.highlight .kc { color: #990055 } /* Keyword.Constant */
+.highlight .kd { color: #990055 } /* Keyword.Declaration */
+.highlight .kn { color: #990055 } /* Keyword.Namespace */
+.highlight .kp { color: #990055 } /* Keyword.Pseudo */
+.highlight .kr { color: #990055 } /* Keyword.Reserved */
+.highlight .kt { color: #990055 } /* Keyword.Type */
+.highlight .ld { color: #669900 } /* Literal.Date */
+.highlight .m { color: #990055 } /* Literal.Number */
+.highlight .s { color: #669900 } /* Literal.String */
+.highlight .na { color: #0077aa } /* Name.Attribute */
+.highlight .nc { color: #0077aa } /* Name.Class */
+.highlight .no { color: #0077aa } /* Name.Constant */
+.highlight .nd { color: #0077aa } /* Name.Decorator */
+.highlight .ni { color: #0077aa } /* Name.Entity */
+.highlight .ne { color: #0077aa } /* Name.Exception */
+.highlight .nf { color: #0077aa } /* Name.Function */
+.highlight .nl { color: #0077aa } /* Name.Label */
+.highlight .nn { color: #0077aa } /* Name.Namespace */
+.highlight .py { color: #0077aa } /* Name.Property */
+.highlight .nt { color: #0077aa } /* Name.Tag */
+.highlight .nv { color: #0077aa } /* Name.Variable */
+.highlight .ow { color: #999999 } /* Operator.Word */
+.highlight .mb { color: #990055 } /* Literal.Number.Bin */
+.highlight .mf { color: #990055 } /* Literal.Number.Float */
+.highlight .mh { color: #990055 } /* Literal.Number.Hex */
+.highlight .mi { color: #990055 } /* Literal.Number.Integer */
+.highlight .mo { color: #990055 } /* Literal.Number.Oct */
+.highlight .sb { color: #669900 } /* Literal.String.Backtick */
+.highlight .sc { color: #669900 } /* Literal.String.Char */
+.highlight .sd { color: #669900 } /* Literal.String.Doc */
+.highlight .s2 { color: #669900 } /* Literal.String.Double */
+.highlight .se { color: #669900 } /* Literal.String.Escape */
+.highlight .sh { color: #669900 } /* Literal.String.Heredoc */
+.highlight .si { color: #669900 } /* Literal.String.Interpol */
+.highlight .sx { color: #669900 } /* Literal.String.Other */
+.highlight .sr { color: #669900 } /* Literal.String.Regex */
+.highlight .s1 { color: #669900 } /* Literal.String.Single */
+.highlight .ss { color: #669900 } /* Literal.String.Symbol */
+.highlight .vc { color: #0077aa } /* Name.Variable.Class */
+.highlight .vg { color: #0077aa } /* Name.Variable.Global */
+.highlight .vi { color: #0077aa } /* Name.Variable.Instance */
+.highlight .il { color: #990055 } /* Literal.Number.Integer.Long */
+        .highlight { background: hsl(24, 20%, 95%); }
+        code.highlight { padding: .1em; border-radius: .3em; }
+        pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+        </style>
+ </head>
+ 
+
+ <body class="h-entry">
+
+  <div class="head">
+  
+   <p data-fill-with="logo"></p>
+  
+   <h1 class="p-name no-ref" id="title">Streaming MediaStreams</h1>
+  
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas,
+    <time class="dt-updated" datetime="2015-08-12">12 August 2015</time></span></h2>
+  
+   <div data-fill-with="spec-metadata">
+    <dl>
+     <dt class="editor">Editor:
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="https://domenic.me/">Domenic Denicola</a> (<a class="p-org org" href="https://www.google.com/">Google</a>) <a class="u-email email" href="mailto:d@domenic.me">d@domenic.me</a>
+     <dt>Participate:
+     <dd><span><a href="https://github.com/domenic/streaming-mediastreams">GitHub domenic/streaming-mediastreams</a> (<a href="https://github.com/domenic/streaming-mediastreams/issues/new">new issue</a>, <a href="https://github.com/domenic/streaming-mediastreams/issues?state=open">open issues</a>)</span>
+     <dd><span><a href="https://wiki.whatwg.org/wiki/IRC">IRC: #whatwg on Freenode</a></span>
+     <dt>Commits:
+     <dd><span><a href="https://github.com/domenic/streaming-mediastreams/commits">https://github.com/domenic/streaming-mediastreams/commits</a></span>
+    </dl>
+   </div>
+  
+   <div data-fill-with="warning"></div>
+  
+   <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a>
+To the extent possible under law, the editors have waived all copyright
+and related or neighboring rights to this work.
+In addition, as of 12 August 2015,
+the editors have made this specification available under the
+<a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
+which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
+Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document.
+</p>
+  
+   <hr title="Separator for header">
+</div>
+
+
+  <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
+
+  <div class="p-summary" data-fill-with="abstract">
+   <p>This specification allows the creation of a readable stream derived from a MediaStream object, to allow
+
+recording or other direct manipulation of the MediaStream’s contents.</p>
+
+</div>
+
+  <div data-fill-with="at-risk"></div>
+
+
+  <h2 class="no-num no-toc no-ref heading settled" id="contents"><span class="content">Table of Contents</span></h2>
+
+  <div data-fill-with="table-of-contents" role="navigation">
+   <ul class="toc" role="directory">
+    <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
+    <li><a href="#examples"><span class="secno">2</span> <span class="content">Example Usage</span></a>
+    <li><a href="#media-stream-recorder"><span class="secno">3</span> <span class="content">The <code>MediaStreamRecorder</code> API</span></a>
+     <ul class="toc">
+      <li><a href="#msr-constructor"><span class="secno">3.1</span> <span class="content">new MediaStreamRecorder(stream, options)</span></a>
+      <li><a href="#msr-media-stream"><span class="secno">3.2</span> <span class="content">get MediaStreamRecorder.prototype.mediaStream</span></a>
+      <li><a href="#msr-type"><span class="secno">3.3</span> <span class="content">get MediaStreamRecorder.prototype.type</span></a>
+      <li><a href="#msr-ignore-muted-media"><span class="secno">3.4</span> <span class="content">get MediaStreamRecorder.prototype.ignoreMutedMedia</span></a>
+      <li><a href="#msr-time-slice"><span class="secno">3.5</span> <span class="content">get MediaStreamRecorder.prototype.timeSlice</span></a>
+      <li><a href="#msr-bit-rate"><span class="secno">3.6</span> <span class="content">get MediaStreamRecorder.prototype.bitRate</span></a>
+      <li><a href="#msr-can-record-type"><span class="secno">3.7</span> <span class="content">MediaStreamRecorder.canRecordType(type)</span></a>
+     </ul>
+    <li><a href="#acks"><span class="secno"></span> <span class="content">Acknowledgments</span></a>
+    <li><a href="#conformance"><span class="secno"></span> <span class="content">
+Conformance</span></a>
+    <li><a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ul class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ul>
+    <li><a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ul class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+      <li><a href="#informative"><span class="secno"></span> <span class="content">Informative References</span></a>
+     </ul>
+    <li><a href="#idl-index"><span class="secno"></span> <span class="content">IDL Index</span></a>
+   </ul></div>
+
+  <main>
+
+
+
+   <script async="" src="https://resources.whatwg.org/file-issue.js"></script>
+
+
+
+   <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+
+
+   <p><em>This section is non-normative.</em></p>
+
+
+   <p><code class="idl"><a data-link-type="idl" href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a></code> objects act as opaque handles to a stream of audio and video data. These can be consumed in a variety of ways by various platform APIs, as discussed in <a data-link-type="biblio" href="#biblio-getusermedia">[GETUSERMEDIA]</a>. This specification defines a way of consuming them by creating a <a data-link-type="dfn" href="https://streams.spec.whatwg.org/#readable-stream">readable stream</a>, whose <a data-link-type="dfn" href="https://streams.spec.whatwg.org/#chunk">chunks</a> are <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/FileAPI/#dfn-Blob">Blob</a></code>s of encoded audio/video data recorded from the stream in a standard container format.</p>
+
+
+   <p>The resulting readable stream, known as a <code>MediaStream</code> recorder and embodied by the <code class="idl"><a data-link-type="idl" href="#mediastreamrecorder">MediaStreamRecorder</a></code> interface, can then be read from directly by author code which wishes to manipulate these blobs. Alternately, it may be <a data-link-type="dfn" href="https://streams.spec.whatwg.org/#piping">piped</a> to another destination, or consumed by other code that takes a readable stream.</p>
+
+
+   <h2 class="heading settled" data-level="2" id="examples"><span class="secno">2. </span><span class="content">Example Usage</span><a class="self-link" href="#examples"></a></h2>
+
+
+   <p><em>This section is non-normative.</em></p>
+
+
+   <p>To read six seconds of audio-video input from a user’s webcam as a single <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/FileAPI/#dfn-Blob">Blob</a></code>, the following code could be used:</p>
+
+
+   <pre><code class="lang-javascript highlight"><span class="kd">function</span> <span class="nx">getSixSecondsOfVideo</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span> <span class="nx">video</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">mediaStream</span> <span class="o">=></span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">recorder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MediaStreamRecorder</span><span class="p">(</span><span class="nx">mediaStream</span><span class="p">,</span> <span class="p">{</span> <span class="nx">timeSlice</span><span class="o">:</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">1000</span> <span class="p">});</span>
+    <span class="kr">const</span> <span class="nx">reader</span> <span class="o">=</span> <span class="nx">recorder</span><span class="p">.</span><span class="nx">getReader</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="nx">reader</span><span class="p">.</span><span class="nx">read</span><span class="p">().</span><span class="nx">then</span><span class="p">(({</span> <span class="nx">value</span> <span class="p">})</span> <span class="o">=></span> <span class="p">{</span>
+      <span class="nx">reader</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+      <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">getSixSecondsOfVideo</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">blob</span> <span class="o">=></span> <span class="p">...);</span></code></pre>
+
+
+   <p>This uses the <code>timeSlice</code> option to ensure that each chunk read from the <code class="idl"><a data-link-type="idl" href="#mediastreamrecorder">MediaStreamRecorder</a></code> is at least six seconds long. Upon receiving the first chunk, it immediately cancels the readable stream, as no more recording is necessary.</p>
+
+
+   <p>If the ultimate destination for the streaming audio-video input were somewhere else, say an <a data-link-type="biblio" href="#biblio-indexeddb">[INDEXEDDB]</a> database, then it would be more prudent to let the user agent choose the time slice, and to store the chunks as they are available:</p>
+
+
+   <pre><code class="lang-javascript highlight"><span class="nx">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span> <span class="nx">video</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">mediaStream</span> <span class="o">=></span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">recorder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MediaStreamRecorder</span><span class="p">(</span><span class="nx">mediaStream</span><span class="p">);</span>
+  <span class="nx">writeReadableStreamToIndexedDBForSixSeconds</span><span class="p">(</span><span class="nx">recorder</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="kd">let</span> <span class="nx">startTime</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">writeReadableStreamToIndexedDBForSixSeconds</span><span class="p">(</span><span class="nx">rs</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">reader</span> <span class="o">=</span> <span class="nx">rs</span><span class="p">.</span><span class="nx">getReader</span><span class="p">();</span>
+  <span class="nx">startTime</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+  <span class="k">return</span> <span class="nx">pump</span><span class="p">();</span>
+
+  <span class="kd">function</span> <span class="nx">pump</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">reader</span><span class="p">.</span><span class="nx">read</span><span class="p">().</span><span class="nx">then</span><span class="p">(({</span> <span class="nx">value</span> <span class="p">})</span> <span class="o">=></span> <span class="p">{</span>
+      <span class="nx">writeBlobToIndexedDB</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span> <span class="c1">// gory details omitted</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">startTime</span> <span class="o">></span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">reader</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">pump</span><span class="p">();</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre>
+
+
+   <p>If you were writing to a destination which had a proper <a data-link-type="dfn" href="https://streams.spec.whatwg.org/#writable-stream">writable stream</a> representing it, this would of course become much easier:</p>
+
+
+   <pre><code class="lang-javascript highlight"><span class="nx">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span> <span class="nx">video</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">mediaStream</span> <span class="o">=></span> <span class="p">{</span>
+  <span class="nx">startTime</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+  <span class="kr">const</span> <span class="nx">recorder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MediaStreamRecorder</span><span class="p">(</span><span class="nx">mediaStream</span><span class="p">);</span>
+
+  <span class="kr">const</span> <span class="nx">dest</span> <span class="o">=</span> <span class="nx">getIndexedDBWritableStream</span><span class="p">();</span> <span class="c1">// using hypothetical future capabilities</span>
+
+  <span class="kr">const</span> <span class="nx">piping</span> <span class="o">=</span> <span class="nx">recorder</span><span class="p">.</span><span class="nx">pipeTo</span><span class="p">(</span><span class="nx">dest</span><span class="p">);</span>
+  <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=></span> <span class="nx">piping</span><span class="p">.</span><span class="nx">cancel</span><span class="p">(),</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span> <span class="c1">// XXX depends on cancelable promises</span>
+<span class="p">});</span></code></pre>
+
+
+   <p>Alternately, your destination may accept readable streams, as is planned for <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a>. This example will continually stream video from the user’s video camera directly to a server endpoint, using standard <a data-link-type="biblio" href="#biblio-streams">[STREAMS]</a> and <a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> idioms that work with any readable stream:</p>
+
+
+   <pre><code class="lang-javascript highlight"><span class="nx">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span> <span class="nx">video</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">mediaStream</span> <span class="o">=></span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">recorder</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MediaStreamRecorder</span><span class="p">(</span><span class="nx">mediaStream</span><span class="p">,</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="s2">"video/mp4"</span> <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">"/storage/user-video.mp4"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">body</span><span class="o">:</span> <span class="nx">recorder</span><span class="p">,</span>
+    <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">"Content-Type"</span><span class="o">:</span> <span class="s2">"video/mp4"</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">});</span></code></pre>
+
+
+   <div class="issue no-marker" id="issue-d41d8cd9"><a class="self-link" href="#issue-d41d8cd9"></a><a class="marker" href="https://github.com/domenic/streaming-mediastreams/issues/3">Issue #3 on GitHub: “Alternate design”</a>
+    <p>Instead of a new class subclassing ReadableStream, with a bunch of useless-seeming getters, we could just have <code>mediaStream.recordAsReadableStream(options)</code> returning a vanilla <code>ReadableStream</code>. You'd presumably add <code>MediaStream.canRecord(...)</code> as well.</p>
+
+
+    <p>This design seems much simpler, <em>if</em> there is no use case for reading the options after creation. Which I can't imagine there are...</p></div>
+
+
+   <p class="issue" id="issue-d41d8cd90"><a class="self-link" href="#issue-d41d8cd90"></a> <a href="https://github.com/domenic/streaming-mediastreams/issues/6">&lt;https://github.com/domenic/streaming-mediastreams/issues/6></a></p>
+
+
+
+   <h2 class="heading settled" data-level="3" id="media-stream-recorder"><span class="secno">3. </span><span class="content">The <code>MediaStreamRecorder</code> API</span><a class="self-link" href="#media-stream-recorder"></a></h2>
+
+
+   <pre class="idl">[<a class="idl-code" data-link-type="constructor" href="#msr-constructor">Constructor</a>(<a data-link-type="idl-name" href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a> <dfn class="idl-code" data-dfn-for="MediaStreamRecorder/MediaStreamRecorder(stream, options)" data-dfn-type="argument" data-export="" id="dom-mediastreamrecorder-mediastreamrecorder-stream-options-stream">stream<a class="self-link" href="#dom-mediastreamrecorder-mediastreamrecorder-stream-options-stream"></a></dfn>, optional <a data-link-type="idl-name" href="#dictdef-mediastreamrecorderoptions">MediaStreamRecorderOptions</a> <dfn class="idl-code" data-dfn-for="MediaStreamRecorder/MediaStreamRecorder(stream, options)" data-dfn-type="argument" data-export="" id="dom-mediastreamrecorder-mediastreamrecorder-stream-options-options">options<a class="self-link" href="#dom-mediastreamrecorder-mediastreamrecorder-stream-options-options"></a></dfn>)]
+interface <dfn class="idl-code" data-dfn-type="interface" data-export="" id="mediastreamrecorder">MediaStreamRecorder<a class="self-link" href="#mediastreamrecorder"></a></dfn> : <a data-link-type="idl-name" href="https://streams.spec.whatwg.org/#rs-class">ReadableStream</a> {
+  readonly attribute <a data-link-type="idl-name" href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="MediaStream " href="#msr-media-stream">mediaStream</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#msr-type">type</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#msr-ignore-muted-media">ignoreMutedMedia</a>;
+  readonly attribute unsigned long long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long long " href="#msr-time-slice">timeSlice</a>;
+  readonly attribute unsigned long long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long long " href="#msr-bit-rate">bitRate</a>;
+
+  static <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/embedded-content.html#canplaytyperesult">CanPlayTypeResult</a> <a class="idl-code" data-link-type="method" href="#msr-can-record-type">canRecordType</a>(DOMString <dfn class="idl-code" data-dfn-for="MediaStreamRecorder/canRecordType(type)" data-dfn-type="argument" data-export="" id="dom-mediastreamrecorder-canrecordtype-type-type">type<a class="self-link" href="#dom-mediastreamrecorder-canrecordtype-type-type"></a></dfn>);
+};
+
+dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" id="dictdef-mediastreamrecorderoptions">MediaStreamRecorderOptions<a class="self-link" href="#dictdef-mediastreamrecorderoptions"></a></dfn> {
+  DOMString <dfn class="idl-code" data-dfn-for="MediaStreamRecorderOptions" data-dfn-type="dict-member" data-export="" data-type="DOMString " id="dom-mediastreamrecorderoptions-type">type<a class="self-link" href="#dom-mediastreamrecorderoptions-type"></a></dfn>;
+  boolean <dfn class="idl-code" data-default="false" data-dfn-for="MediaStreamRecorderOptions" data-dfn-type="dict-member" data-export="" data-type="boolean " id="dom-mediastreamrecorderoptions-ignoremutedmedia">ignoreMutedMedia<a class="self-link" href="#dom-mediastreamrecorderoptions-ignoremutedmedia"></a></dfn> = false;
+  [EnforceRange] unsigned long long <dfn class="idl-code" data-default="0" data-dfn-for="MediaStreamRecorderOptions" data-dfn-type="dict-member" data-export="" data-type="unsigned long long " id="dom-mediastreamrecorderoptions-timeslice">timeSlice<a class="self-link" href="#dom-mediastreamrecorderoptions-timeslice"></a></dfn> = 0;
+  [EnforceRange] unsigned long long <dfn class="idl-code" data-dfn-for="MediaStreamRecorderOptions" data-dfn-type="dict-member" data-export="" data-type="unsigned long long " id="dom-mediastreamrecorderoptions-bitrate">bitRate<a class="self-link" href="#dom-mediastreamrecorderoptions-bitrate"></a></dfn>;
+};
+</pre>
+
+
+   <p>All <code class="idl"><a data-link-type="idl" href="#mediastreamrecorder">MediaStreamRecorder</a></code> instances have [[mediaStream]], [[type]], [[ignoreMutedMedia]], [[timeSlice]], and [[bitRate]] internal slots.</p>
+
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="constructor" data-export="" data-level="3.1" data-lt="MediaStreamRecorder(stream, options)|MediaStreamRecorder(stream)" id="msr-constructor"><span class="secno">3.1. </span><span class="content">new MediaStreamRecorder(stream, options)</span><a class="self-link" href="#msr-constructor"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>If <code>options.type</code> is present but is not a supported MIME type for media stream recording, throw a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a></code> DOMException.</p>
+     
+
+    <li data-md="">
+     <p>If <code>options.type</code> is present, let <var>type</var> be <code>options.type</code>. Otherwise, let <var>type</var> be a user-agent chosen default recording MIME type.</p>
+     
+
+    <li data-md="">
+     <p>If <code>options.bitRate</code> is present, let <var>bitRate</var> be <code>options.bitRate</code>, clamped within a range deemed acceptable by the user agent. Otherwise, let <var>bitRate</var> be a default bit rate, perhaps dependent on <var>type</var> or <var>timeSlice</var>.</p>
+     
+
+    <li data-md="">
+     <p>Let <var>timeSlice</var> be the greater of <code>options.timeSlice</code> and some minimum recording time slice imposed by the user agent.</p>
+     
+
+    <li data-md="">
+     <p>Call <a href="https://streams.spec.whatwg.org/#rs-constructor">the superconstructor</a> with appropriate underlying source and queuing strategy arguments so as to record <code>mediaStream</code> according to the following requirements:</p>
+     
+
+     <ol>
+      <li data-md="">
+       <p>All data from <code>mediaStream</code> must be recorded as <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/FileAPI/#dfn-Blob">Blob</a></code> chunks that are enqueued into this readable stream.</p>
+       
+
+       <div class="note" role="note">
+    The choice of <code>Blob</code> instead of, e.g., <code class="idl"><a data-link-type="idl" href="http://www.ecma-international.org/ecma-262/6.0/#sec-arraybuffer-objects">ArrayBuffer</a></code>, is to allow the data to be kept in a place that is not immediately accessible to the main thread. For example, Firefox separates its media subsystem from the main thread via asynchronous dispatch. See <a href="https://github.com/domenic/streaming-mediastreams/issues/5">#5</a> for more discussion.
+</div>
+       
+
+      <li data-md="">
+       <p>All such chunks must represent at least <var>timeSlice</var> milliseconds of data, except potentially the last one if the <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a></code> ends before that much data can be recorded. Any excess length beyond <var>timeSlice</var> milliseconds for each chunk should be minimized.</p>
+       
+
+      <li data-md="">
+       <p>The resulting chunks must be created such that the original tracks of the <code>MediaStream</code> can be retrieved at playback time by standard software meant for replaying the container format specified by <var>type</var>. When multiple <code>Blob</code> chunks are enqueued, the individual <code>Blob</code>s need not be playable, but the concatenation of all the <code>Blob</code>s from a completed recording must be playable.</p>
+       
+
+      <li data-md="">
+       <p>The resulting chunks must be encoded using <var>bitRate</var> as the bit rate for encoding.</p>
+       
+
+      <li data-md="">
+       <p>If any track within the <code>MediaStream</code> is muted at any time, then either:</p>
+       
+
+       <ol>
+        <li data-md="">
+         <p>If <code>options.ignoreMutedMedia</code> is <b>true</b>, nothing must be recorded for those tracks.</p>
+         
+
+        <li data-md="">
+         <p>Otherwise, the chunks enqueued to represent those tracks must be recorded as black frames or silence (as appropriate) while the track remains muted.</p>
+         
+</ol>
+      <li data-md="">
+       <p>If at any point <code>mediaStream</code>’s isolation properties change so that access to it is no longer allowed, this readable stream must be errored with a <code class="idl"><a data-link-type="idl" href="https://heycam.github.io/webidl/#securityerror">SecurityError</a></code> DOMException.</p>
+       
+
+      <li data-md="">
+       <p>If recording cannot be started or at any point cannot continue (for reasons other than a security violation),</p>
+       
+
+       <ol>
+        <li data-md="">
+         <p>A chunk containing any currently-recorded but not-yet-enqueued data must be enqueued into this readable stream.</p>
+         
+
+        <li data-md="">
+         <p>This readable stream must be errored with a <code class="idl"><a data-link-type="idl" href="http://www.ecma-international.org/ecma-262/6.0/#sec-native-error-types-used-in-this-standard-typeerror">TypeError</a></code>.</p>
+         
+</ol>
+      <li data-md="">
+       <p>If <code>mediaStream</code> ends, then this readable stream must be closed.</p>
+       
+</ol>
+    <li data-md="">
+     <p>Set this@[[mediaStream]] to <code>mediaStream</code>, this@[[type]] to <var>type</var>, this@[[ignoreMutedMedia]] to <code>options.ignoreMutedMedia</code>, this@[[timeSlice]] to <var>timeSlice</var>, and this@[[bitRate]] to <var>bitRate</var>.</p>
+     
+</ol>
+
+   <p class="issue" id="issue-d41d8cd91"><a class="self-link" href="#issue-d41d8cd91"></a> <a href="https://github.com/domenic/streaming-mediastreams/issues/1">&lt;https://github.com/domenic/streaming-mediastreams/issues/1></a></p>
+
+
+   <p class="issue" id="issue-d41d8cd92"><a class="self-link" href="#issue-d41d8cd92"></a> <a href="https://github.com/domenic/streaming-mediastreams/issues/4">&lt;https://github.com/domenic/streaming-mediastreams/issues/4></a></p>
+
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="attribute" data-export="" data-level="3.2" data-lt="mediaStream" id="msr-media-stream"><span class="secno">3.2. </span><span class="content">get MediaStreamRecorder.prototype.mediaStream</span><a class="self-link" href="#msr-media-stream"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>Return this@[[mediaStream]].</p>
+     
+</ol>
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="attribute" data-export="" data-level="3.3" data-lt="type" id="msr-type"><span class="secno">3.3. </span><span class="content">get MediaStreamRecorder.prototype.type</span><a class="self-link" href="#msr-type"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>Return this@[[type]].</p>
+     
+</ol>
+
+   <p class="issue" id="issue-d41d8cd93"><a class="self-link" href="#issue-d41d8cd93"></a> <a href="https://github.com/domenic/streaming-mediastreams/issues/2">&lt;https://github.com/domenic/streaming-mediastreams/issues/2></a></p>
+
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="attribute" data-export="" data-level="3.4" data-lt="ignoreMutedMedia" id="msr-ignore-muted-media"><span class="secno">3.4. </span><span class="content">get MediaStreamRecorder.prototype.ignoreMutedMedia</span><a class="self-link" href="#msr-ignore-muted-media"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>Return this@[[ignoreMutedMedia]].</p>
+     
+</ol>
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="attribute" data-export="" data-level="3.5" data-lt="timeSlice" id="msr-time-slice"><span class="secno">3.5. </span><span class="content">get MediaStreamRecorder.prototype.timeSlice</span><a class="self-link" href="#msr-time-slice"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>Return this@[[timeSlice]].</p>
+     
+</ol>
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="attribute" data-export="" data-level="3.6" data-lt="bitRate" id="msr-bit-rate"><span class="secno">3.6. </span><span class="content">get MediaStreamRecorder.prototype.bitRate</span><a class="self-link" href="#msr-bit-rate"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>Return this@[[bitRate]].</p>
+     
+
+</ol>
+
+   <h3 class="heading settled idl-code" data-dfn-for="MediaStreamRecorder" data-dfn-type="method" data-export="" data-level="3.7" data-lt="canRecordType(type)" id="msr-can-record-type"><span class="secno">3.7. </span><span class="content">MediaStreamRecorder.canRecordType(type)</span><a class="self-link" href="#msr-can-record-type"></a></h3>
+
+
+   <ol>
+    <li data-md="">
+     <p>If the user agent knows that it cannot record <code>type</code>, return <code>""</code>.</p>
+     
+
+    <li data-md="">
+     <p>If the user agent is confident that it can record <code>type</code>, return <code>"probably"</code>.</p>
+     
+
+    <li data-md="">
+     <p>Return <code>"maybe"</code>.</p>
+     
+</ol>
+
+   <div class="note" role="note">
+    Implementers are encouraged to return <code>"maybe"</code> unless the type can be confidently established as being
+    supported or not.
+</div>
+
+
+   <h2 class="no-num heading settled" id="acks"><span class="content">Acknowledgments</span><a class="self-link" href="#acks"></a></h2>
+
+
+   <p>The editor would like to thank Jim Barnett and Travis Leithead for ther original <a data-link-type="biblio" href="#biblio-mediastream-recording">[MEDIASTREAM-RECORDING]</a> specification. This document is largely a reframing of their work on top of <a data-link-type="biblio" href="#biblio-streams">[STREAMS]</a>.</p>
+
+
+
+
+   <p>This specification is written by <a href="https://domenic.me/">Domenic Denicola</a> (<a href="https://google.com">Google</a>, <a href="mailto:d@domenic.me">d@domenic.me</a>).</p>
+
+
+   <p>Per <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>, to the extent possible under law, the editor has waived all copyright and related or neighboring rights to this work.</p>
+
+
+
+</main>
+
+  <h2 class="no-ref no-num heading settled" id="conformance"><span class="content">
+Conformance</span><a class="self-link" href="#conformance"></a></h2>
+
+    
+  <p>
+        Conformance requirements are expressed with a combination of descriptive assertions and RFC 2119 terminology.
+        The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+        in the normative parts of this document
+        are to be interpreted as described in RFC 2119.
+        However, for readability,
+        these words do not appear in all uppercase letters in this specification.
+
+    </p>
+  <p>
+        All of the text of this specification is normative
+        except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119">[RFC2119]</a>
+
+    </p>
+  <p>
+        Examples in this specification are introduced with the words “for example”
+        or are set apart from the normative text with <code>class="example"</code>, like this:
+
+    </p>
+  <div class="example" id="example-ae2b6bc0"><a class="self-link" href="#example-ae2b6bc0"></a>
+        This is an example of an informative example.
+    </div>
+
+    
+  <p>
+        Informative notes begin with the word “Note”
+        and are set apart from the normative text with <code>class="note"</code>, like this:
+
+    </p>
+  <p class="note" role="note">
+        Note, this is an informative note.
+
+
+
+</p>
+  <h2 class="no-num heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="no-num heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="indexlist">
+   <li>bitRate
+    <ul>
+     <li><a href="#dom-mediastreamrecorderoptions-bitrate">dict-member for MediaStreamRecorderOptions</a><span>, in §3</span>
+     <li><a href="#msr-bit-rate">attribute for MediaStreamRecorder</a><span>, in §3.5</span>
+    </ul>
+   <li><a href="#msr-can-record-type">canRecordType(type)</a><span>, in §3.6</span>
+   <li>ignoreMutedMedia
+    <ul>
+     <li><a href="#dom-mediastreamrecorderoptions-ignoremutedmedia">dict-member for MediaStreamRecorderOptions</a><span>, in §3</span>
+     <li><a href="#msr-ignore-muted-media">attribute for MediaStreamRecorder</a><span>, in §3.3</span>
+    </ul>
+   <li><a href="#msr-media-stream">mediaStream</a><span>, in §3.1</span>
+   <li><a href="#mediastreamrecorder">MediaStreamRecorder</a><span>, in §3</span>
+   <li><a href="#dictdef-mediastreamrecorderoptions">MediaStreamRecorderOptions</a><span>, in §3</span>
+   <li><a href="#msr-constructor">MediaStreamRecorder(stream)</a><span>, in §3</span>
+   <li><a href="#msr-constructor">MediaStreamRecorder(stream, options)</a><span>, in §3</span>
+   <li><a href="#dom-mediastreamrecorder-mediastreamrecorder-stream-options-options">options</a><span>, in §3</span>
+   <li><a href="#dom-mediastreamrecorder-mediastreamrecorder-stream-options-stream">stream</a><span>, in §3</span>
+   <li>timeSlice
+    <ul>
+     <li><a href="#dom-mediastreamrecorderoptions-timeslice">dict-member for MediaStreamRecorderOptions</a><span>, in §3</span>
+     <li><a href="#msr-time-slice">attribute for MediaStreamRecorder</a><span>, in §3.4</span>
+    </ul>
+   <li>type
+    <ul>
+     <li><a href="#dom-mediastreamrecorder-canrecordtype-type-type">argument for MediaStreamRecorder/canRecordType(type)</a><span>, in §3</span>
+     <li><a href="#dom-mediastreamrecorderoptions-type">dict-member for MediaStreamRecorderOptions</a><span>, in §3</span>
+     <li><a href="#msr-type">attribute for MediaStreamRecorder</a><span>, in §3.2</span>
+    </ul>
+  </ul>
+  <h3 class="no-num heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="indexlist">
+   <li><a data-link-type="biblio" href="#biblio-ecmascript">[ECMASCRIPT]</a> defines the following terms:
+    <ul>
+     <li><a href="http://www.ecma-international.org/ecma-262/6.0/#sec-arraybuffer-objects">ArrayBuffer</a>
+     <li><a href="http://www.ecma-international.org/ecma-262/6.0/#sec-native-error-types-used-in-this-standard-typeerror">TypeError</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-mediastream-recording">[mediastream-recording]</a> defines the following terms:
+    <ul>
+     <li><a href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-streams">[STREAMS]</a> defines the following terms:
+    <ul>
+     <li><a href="https://streams.spec.whatwg.org/#rs-class">ReadableStream</a>
+     <li><a href="https://streams.spec.whatwg.org/#chunk">chunk</a>
+     <li><a href="https://streams.spec.whatwg.org/#piping">pipe</a>
+     <li><a href="https://streams.spec.whatwg.org/#readable-stream">readable stream</a>
+     <li><a href="https://streams.spec.whatwg.org/#writable-stream">writable stream</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-webidl">[WebIDL]</a> defines the following terms:
+    <ul>
+     <li><a href="https://heycam.github.io/webidl/#notsupportederror">NotSupportedError</a>
+     <li><a href="https://heycam.github.io/webidl/#securityerror">SecurityError</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-html">[HTML]</a> defines the following terms:
+    <ul>
+     <li><a href="https://html.spec.whatwg.org/multipage/embedded-content.html#canplaytyperesult">CanPlayTypeResult</a>
+    </ul>
+  </ul>
+  <h2 class="no-num heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="no-num heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-ecmascript"><a class="self-link" href="#biblio-ecmascript"></a>[ECMASCRIPT]
+   <dd>Allen Wirfs-Brock. <a href="https://people.mozilla.org/~jorendorff/es6-draft.html">ECMA-262 6th Edition, The ECMAScript 2015 Language Specification</a>. June 2015. Standard. URL: <a href="https://people.mozilla.org/~jorendorff/es6-draft.html">https://people.mozilla.org/~jorendorff/es6-draft.html</a>
+   <dt id="biblio-html"><a class="self-link" href="#biblio-html"></a>[HTML]
+   <dd>Ian Hickson. <a href="https://html.spec.whatwg.org/multipage/">HTML Standard</a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+   <dt id="biblio-streams"><a class="self-link" href="#biblio-streams"></a>[STREAMS]
+   <dd>Domenic Denicola. <a href="https://streams.spec.whatwg.org/">Streams Standard</a>. Living Standard. URL: <a href="https://streams.spec.whatwg.org/">https://streams.spec.whatwg.org/</a>
+   <dt id="biblio-webidl"><a class="self-link" href="#biblio-webidl"></a>[WebIDL]
+   <dd>Cameron McCormack. <a href="https://heycam.github.io/webidl/">Web IDL</a>. 19 April 2012. CR. URL: <a href="https://heycam.github.io/webidl/">https://heycam.github.io/webidl/</a>
+   <dt id="biblio-mediastream-recording"><a class="self-link" href="#biblio-mediastream-recording"></a>[MEDIASTREAM-RECORDING]
+   <dd>Travis Leithead; James Barnett. <a href="https://w3c.github.io/mediacapture-record/MediaRecorder.html">MediaStream Recording</a>. 27 January 2015. WD. URL: <a href="https://w3c.github.io/mediacapture-record/MediaRecorder.html">https://w3c.github.io/mediacapture-record/MediaRecorder.html</a>
+   <dt id="biblio-rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[RFC2119]
+   <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
+  </dl>
+  <h3 class="no-num heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
+  <dl>
+   <dt id="biblio-fetch"><a class="self-link" href="#biblio-fetch"></a>[FETCH]
+   <dd>Anne van Kesteren. <a href="https://fetch.spec.whatwg.org/">Fetch Standard</a>. Living Standard. URL: <a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>
+   <dt id="biblio-getusermedia"><a class="self-link" href="#biblio-getusermedia"></a>[GETUSERMEDIA]
+   <dd>Daniel Burnett; et al. <a href="https://w3c.github.io/mediacapture-main/">Media Capture and Streams</a>. 14 April 2015. LCWD. URL: <a href="https://w3c.github.io/mediacapture-main/">https://w3c.github.io/mediacapture-main/</a>
+   <dt id="biblio-indexeddb"><a class="self-link" href="#biblio-indexeddb"></a>[IndexedDB]
+   <dd>Nikunj Mehta; et al. <a href="http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html">Indexed Database API</a>. 8 January 2015. REC. URL: <a href="http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html">http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html</a>
+  </dl>
+  <h2 class="no-num heading settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
+  <pre class="idl">[<a class="idl-code" data-link-type="constructor" href="#msr-constructor">Constructor</a>(<a data-link-type="idl-name" href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a> <a href="#dom-mediastreamrecorder-mediastreamrecorder-stream-options-stream">stream</a>, optional <a data-link-type="idl-name" href="#dictdef-mediastreamrecorderoptions">MediaStreamRecorderOptions</a> <a href="#dom-mediastreamrecorder-mediastreamrecorder-stream-options-options">options</a>)]
+interface <a href="#mediastreamrecorder">MediaStreamRecorder</a> : <a data-link-type="idl-name" href="https://streams.spec.whatwg.org/#rs-class">ReadableStream</a> {
+  readonly attribute <a data-link-type="idl-name" href="https://w3c.github.io/mediacapture-main/#idl-def-MediaStream">MediaStream</a> <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="MediaStream " href="#msr-media-stream">mediaStream</a>;
+  readonly attribute DOMString <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#msr-type">type</a>;
+  readonly attribute boolean <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="boolean " href="#msr-ignore-muted-media">ignoreMutedMedia</a>;
+  readonly attribute unsigned long long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long long " href="#msr-time-slice">timeSlice</a>;
+  readonly attribute unsigned long long <a class="idl-code" data-link-type="attribute" data-readonly="" data-type="unsigned long long " href="#msr-bit-rate">bitRate</a>;
+
+  static <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/embedded-content.html#canplaytyperesult">CanPlayTypeResult</a> <a class="idl-code" data-link-type="method" href="#msr-can-record-type">canRecordType</a>(DOMString <a href="#dom-mediastreamrecorder-canrecordtype-type-type">type</a>);
+};
+
+dictionary <a href="#dictdef-mediastreamrecorderoptions">MediaStreamRecorderOptions</a> {
+  DOMString <a data-type="DOMString " href="#dom-mediastreamrecorderoptions-type">type</a>;
+  boolean <a data-default="false" data-type="boolean " href="#dom-mediastreamrecorderoptions-ignoremutedmedia">ignoreMutedMedia</a> = false;
+  [EnforceRange] unsigned long long <a data-default="0" data-type="unsigned long long " href="#dom-mediastreamrecorderoptions-timeslice">timeSlice</a> = 0;
+  [EnforceRange] unsigned long long <a data-type="unsigned long long " href="#dom-mediastreamrecorderoptions-bitrate">bitRate</a>;
+};
+
+</pre></body>
+</html>
